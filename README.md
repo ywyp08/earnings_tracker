@@ -1,2 +1,2 @@
 # Earnings Tracker
-This project is a command-line based tool which aims to help its users to track their earnngs.
+This project is a command-line tool that aims to help its users track their earnings.
