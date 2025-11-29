@@ -52,7 +52,7 @@ def convert_to_czk(amount, currency):
             return converted_amount
         else:
             typer.echo(f"CZK rate not found for {currency}.")
-            return none
+            return None
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
@@ -71,7 +71,7 @@ def earn(amount: float, currency: str):
         amount_czk = convert_to_czk(amount, currency)
 
     entry = {
-            "date": datetime.now().strftime("%Y-%m-%d"),
+            "date": datetime.now().strftime("%d-%m-%Y"),
             "amount_czk": amount_czk,
             "source_currency": currency,
             "original_amount": amount
@@ -83,29 +83,27 @@ def earn(amount: float, currency: str):
 
     typer.echo(f"Logged: {entry}")
 
+
 @app.command()
 def report():
     """Show total earnings for the current month."""
 
-    try:
-        with open(file_path, "r") as json_file:
-            data = json.load(json_file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        data = []
+    data = load_data()
 
-    current_month = datetime.now().strftime("%m-%Y")
-    total_earnings = 0
+    time_period = datetime.now().strftime("%m-%Y")
+    total_earnings = 0.0
 
     for entry in data:
-        if entry["date"].endswith(current_month):
+        if entry["date"].endswith(time_period):
                 total_earnings += entry["amount_czk"]
 
     report = (
-        f"Month: {current_month}\n"
+        f"Month: {time_period}\n"
         f"Total Earnings: {total_earnings:.2f} CZK"
     )
 
-    print(report)
+    typer.echo(report)
+
 
 if __name__ == "__main__":
    app() 
