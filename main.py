@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import requests
-import sys
 from datetime import datetime
 import json
 import os
@@ -43,7 +42,7 @@ def convert_to_czk(amount, currency):
     try:
         response = requests.get(url)
         if response.status_code != 200:
-            print(f"Error: Received status code {response.status_code} from the API.")
+            typer.echo(f"Error: Received status code {response.status_code} from the API.")
             return None
         data = response.json()
         if 'CZK' in data['rates']:
@@ -54,7 +53,7 @@ def convert_to_czk(amount, currency):
             typer.echo(f"CZK rate not found for {currency}.")
             return None
     except Exception as e:
-        print(f"An error occurred: {e}")
+        typer.echo(f"An error occurred: {e}")
         return None
 
 
@@ -64,17 +63,11 @@ def convert_to_czk(amount, currency):
 def earn(amount: float, currency: str):
     """Log today's earning."""
 
-    currency = currency.lower()
-    if currency == "czk":
-        amount_czk = amount
-    else:
-        amount_czk = convert_to_czk(amount, currency)
-
     entry = {
             "date": datetime.now().strftime("%d-%m-%Y"),
-            "amount_czk": amount_czk,
-            "source_currency": currency,
-            "original_amount": amount
+            "original_amount": amount,
+            "original_currency": currency,
+            "amount_czk": convert_to_czk(amount, currency)
     }
 
     data = load_data()
