@@ -9,6 +9,25 @@ import typer
 
 app = typer.Typer()
 
+FILE_PATH = os.path.expanduser('./data/earnings.json')
+
+def load_data():
+    if not os.path.exists(FILE_PATH):
+        return[]
+
+    try:
+        with open(FILE_PATH, "r") as file:
+            return json.load(file)
+    except json.JSONDecodeError:
+        typer.echo("ERROR: earnings.json is corrupted.")
+        typer.echo(f"Path: {FILE_PATH}")
+        raise typer.Exit(code=1)
+
+def save_date(data):
+    os.makedirs(os.path.dirmane(FILE_PATH), exist_ok=True)
+    with open(FILE_PATH, "w") as file:
+        json.dump(data, file, indent=4)
+
 def convert_usd_to_czk(amount):
     url = 'https://api.exchangerate-api.com/v4/latest/USD'
     try:
@@ -26,7 +45,6 @@ def convert_usd_to_czk(amount):
 
 @app.command()
 def earn(amount: float, currency: str):
-
     try:
         amount = float(amount)
     except ValueError:
@@ -40,7 +58,7 @@ def earn(amount: float, currency: str):
     
     if amount_czk is not None:
         earnings_data = {
-            "date": datetime.now().strftime("%d-%m-%Y"),
+            "date": datetime.now().strftime("YYYY-MM-DD"),
              "amount_czk": amount_czk
         }
 
@@ -80,8 +98,6 @@ def report():
     )
 
     print(report)
-
-file_path = os.path.expanduser('./data/earnings.json')
 
 if __name__ == "__main__":
    app() 
