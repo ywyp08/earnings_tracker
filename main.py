@@ -5,6 +5,9 @@ import sys
 from datetime import datetime
 import json
 import os
+import typer
+
+app = typer.Typer()
 
 def convert_usd_to_czk(amount):
     url = 'https://api.exchangerate-api.com/v4/latest/USD'
@@ -21,7 +24,8 @@ def convert_usd_to_czk(amount):
         print(f"An error occurred: {e}")
         return None
 
-def log_earning(amount, currency):
+@app.command()
+def earn(amount: float, currency: str):
 
     try:
         amount = float(amount)
@@ -55,7 +59,8 @@ def log_earning(amount, currency):
     else:
         print("Failed to convert amount.")
 
-def generate_report():
+@app.command()
+def report():
     try:
         with open(file_path, "r") as json_file:
             data = json.load(json_file)
@@ -71,26 +76,12 @@ def generate_report():
 
     report = (
         f"Month: {current_month}\n"
-        f"Total Earnings: {total_earnings:.2f} CZK\n"
+        f"Total Earnings: {total_earnings:.2f} CZK"
     )
 
     print(report)
 
-file_path = os.path.expanduser('~/.money/earnings.json')
-
-def command_tree(command):
-    if command == "earn":
-        amount = float(sys.argv[2])
-        currency = str(sys.argv[3])
-        log_earning(amount, currency)
-    elif command == "report":
-        generate_report()
-    else:
-        print("Command not recognized")
-
-def main():
-    command = sys.argv[1]
-    command_tree(command)
+file_path = os.path.expanduser('./data/earnings.json')
 
 if __name__ == "__main__":
-    main()
+   app() 
