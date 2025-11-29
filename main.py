@@ -12,9 +12,10 @@ app = typer.Typer()
 FILE_PATH = os.path.expanduser('./data/earnings.json')
 
 def load_data():
+    """Load earnings data."""
+
     if not os.path.exists(FILE_PATH):
         return[]
-
     try:
         with open(FILE_PATH, "r") as file:
             return json.load(file)
@@ -23,36 +24,49 @@ def load_data():
         typer.echo(f"Path: {FILE_PATH}")
         raise typer.Exit(code=1)
 
+
 def save_date(data):
+    """Save earnings data."""
+
     os.makedirs(os.path.dirmane(FILE_PATH), exist_ok=True)
     with open(FILE_PATH, "w") as file:
         json.dump(data, file, indent=4)
 
-def convert_usd_to_czk(amount):
-    url = 'https://api.exchangerate-api.com/v4/latest/USD'
+
+def convert_to_czk(amount, currency):
+    """Convert given amount from specific currency to CZK."""
+
+    url = f'https://api.exchangerate-api.com/v4/latest/{currency.upper()}'
     try:
         response = requests.get(url)
         if response.status_code != 200:
             print(f"Error: Received status code {response.status_code} from the API.")
             return None
         data = response.json()
-        rate = data['rates']['CZK']
-        converted_amount = amount * rate
-        return converted_amount
+        if 'CZK' in data['rates']:
+            rate = data['rates']['CZK']
+            converted_amount = amount * rate
+            return converted_amount
+        else:
+            typer.echo(f"CZK rate not found for {currency}.")
+            return none
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
 
+
 @app.command()
 def earn(amount: float, currency: str):
+    """Log today's earning."""
+
     try:
         amount = float(amount)
     except ValueError:
         print("Invalid amount entered.")
         return
     
-    if currency == "usd":
-        amount_czk = convert_usd_to_czk(amount)
+    if currency != "czk":
+        amount_czk = convert_to_czk(amount, currency)
     elif currency == "czk":
         amount_czk = amount
     
@@ -77,8 +91,11 @@ def earn(amount: float, currency: str):
     else:
         print("Failed to convert amount.")
 
+
 @app.command()
 def report():
+    """Show total earnings for the current month."""
+
     try:
         with open(file_path, "r") as json_file:
             data = json.load(json_file)
