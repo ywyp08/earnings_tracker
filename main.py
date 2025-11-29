@@ -11,6 +11,9 @@ app = typer.Typer()
 
 FILE_PATH = os.path.expanduser('./data/earnings.json')
 
+
+#Helper functions
+
 def load_data():
     """Load earnings data."""
 
@@ -25,10 +28,10 @@ def load_data():
         raise typer.Exit(code=1)
 
 
-def save_date(data):
+def save_data(data):
     """Save earnings data."""
 
-    os.makedirs(os.path.dirmane(FILE_PATH), exist_ok=True)
+    os.makedirs(os.path.dirname(FILE_PATH), exist_ok=True)
     with open(FILE_PATH, "w") as file:
         json.dump(data, file, indent=4)
 
@@ -55,42 +58,30 @@ def convert_to_czk(amount, currency):
         return None
 
 
+#Commands
+
 @app.command()
 def earn(amount: float, currency: str):
     """Log today's earning."""
 
-    try:
-        amount = float(amount)
-    except ValueError:
-        print("Invalid amount entered.")
-        return
-    
-    if currency != "czk":
-        amount_czk = convert_to_czk(amount, currency)
-    elif currency == "czk":
+    currency = currency.lower()
+    if currency == "czk":
         amount_czk = amount
-    
-    if amount_czk is not None:
-        earnings_data = {
-            "date": datetime.now().strftime("YYYY-MM-DD"),
-             "amount_czk": amount_czk
-        }
-
-        try:
-            with open(file_path, "r") as json_file:
-                data = json.load(json_file)
-        except (FileNotFoundError, json.JSONDecodeError):
-            data = []
-
-        data.append(earnings_data)
-
-        with open(file_path, "w") as json_file:
-            json.dump(data, json_file, indent=4)
-        
-        print(f"Earnings logged: {earnings_data}")
     else:
-        print("Failed to convert amount.")
+        amount_czk = convert_to_czk(amount, currency)
 
+    entry = {
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "amount_czk": amount_czk,
+            "source_currency": currency,
+            "original_amount": amount
+    }
+
+    data = load_data()
+    data.append(entry)
+    save_data(data)
+
+    typer.echo(f"Logged: {entry}")
 
 @app.command()
 def report():

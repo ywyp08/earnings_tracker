@@ -6,5 +6,17 @@
     {
         "date": "30-11-2025",
         "amount_czk": 875.7
+    },
+    {
+        "date": "YYYY-MM-DD",
+        "amount_czk": 875.7,
+        "source_currency": "usd",
+        "original_amount": 42.0
+    },
+    {
+        "date": "2025-11-30",
+        "amount_czk": 875.7,
+        "source_currency": "usd",
+        "original_amount": 42.0
     }
 ]
