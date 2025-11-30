@@ -1,10 +1,7 @@
 import argparse
 
-def earn(args):
-    print("earn")
+from .handlers import earn, report
 
-def report(args):
-    print("report")
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -18,14 +15,7 @@ def get_args():
     earn_parser.set_defaults(func=earn)
 
     report_parser = subparsers.add_parser('report', help='Report earnings for period')
-    report_parser.add_argument('time_period', type=str, default=None)
+    report_parser.add_argument('time_period', nargs='?', default=None)
     report_parser.set_defaults(func=report)
 
     return parser.parse_args()
-
-def main():
-    args = get_args()
-    args.func(args)
-
-if __name__ == "__main__":
-    main()
