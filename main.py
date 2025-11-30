@@ -5,6 +5,7 @@ from datetime import datetime
 import json
 import os
 import typer
+from typing_extensions import Annotated
 
 app = typer.Typer()
 
@@ -63,38 +64,33 @@ def convert_to_czk(amount, currency):
 def earn(amount: float, currency: str):
     """Log today's earning."""
 
+    data = load_data()
     entry = {
             "date": datetime.now().strftime("%d-%m-%Y"),
             "original_amount": amount,
             "original_currency": currency,
             "amount_czk": convert_to_czk(amount, currency)
     }
-
-    data = load_data()
     data.append(entry)
     save_data(data)
-
     typer.echo(f"Logged: {entry}")
 
 
 @app.command()
-def report():
+def report(time_period: Annotated[str, typer.Argument()] = datetime.now().strftime("%m-%Y")):
     """Show total earnings for the current month."""
 
     data = load_data()
-
-    time_period = datetime.now().strftime("%m-%Y")
     total_earnings = 0.0
-
+    if time_period is None:
+        time_period = datetime.now().strftime("%m-%Y")
     for entry in data:
         if entry["date"].endswith(time_period):
                 total_earnings += entry["amount_czk"]
-
     report = (
         f"Month: {time_period}\n"
         f"Total Earnings: {total_earnings:.2f} CZK"
     )
-
     typer.echo(report)
 
 
