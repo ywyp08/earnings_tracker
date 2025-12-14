@@ -4,6 +4,14 @@ from .utils import *
 
 
 def earn(args):
+    """
+    Log an earning.
+
+    arguments:
+    amount
+    currency
+    """
+
     data = load_data()
     amount_czk = convert_to_czk(args.amount, args.currency)
     entry = {
@@ -18,6 +26,13 @@ def earn(args):
 
 
 def report(args):
+    """
+    Print earnings report.
+
+    arguments:
+    [time_period]
+    """
+
     time_period = args.time_period or datetime.now().strftime("%Y-%m")
     data = load_data()
     total = 0.0
