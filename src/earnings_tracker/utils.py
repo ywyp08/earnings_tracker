@@ -1,8 +1,10 @@
 import json
 import os
 import urllib.request
+from urllib.error import URLError, HTTPError
 
-FILE_PATH = os.path.expanduser("./data/earnings.json")
+
+FILE_PATH = os.path.expanduser("~/.local/share/earnings_tracker/earnings.json")
 
 
 def load_data():
@@ -13,14 +15,19 @@ def load_data():
 
 
 def save_data(data):
+    folder = os.path.dirname(FILE_PATH)
+    if folder and not os.path.exists(folder):
+        os.makedirs(folder)
     with open(FILE_PATH, "w") as file:
         json.dump(data, file, indent=4)
 
 
 def convert_to_czk(amount, currency):
     url = f'https://api.exchangerate-api.com/v4/latest/{currency.upper()}'
-    response = urllib.request.urlopen(url)
-    data = json.load(response)
-    rate = data['rates']['CZK']
-    amount_czk = amount * rate
-    return amount_czk
+    try:
+        response = urllib.request.urlopen(url)
+        data = json.load(response)
+        rate = data['rates']['CZK']
+    except (HTTPError, URLError, KeyError, ValueError):
+        raise ValueError("currency conversion failed")
+    return amount * rate
