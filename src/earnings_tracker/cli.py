@@ -5,13 +5,22 @@ import typer
 
 from earnings_tracker.utils import load_data, save_data, convert_to_czk 
 
-app = typer.Typer()
+
+app = typer.Typer(help="Earnings Tracker CLI for logging and reporting earnings.")
 
 
 @app.command()
 def earn(amount: float, currency: str):
+    """
+    Log new earning.
+    """
+    try:
+        amount_czk = convert_to_czk(amount, currency)
+    except ValueError:
+        typer.echo("Error: conversion failed (check currency or network)")
+        raise typer.Exit(1)
+    
     data = load_data()
-    amount_czk = convert_to_czk(amount, currency)
     entry = {
             "date": datetime.now().strftime("%Y-%m-%d"),
             "amount": amount,
@@ -25,6 +34,9 @@ def earn(amount: float, currency: str):
 
 @app.command()
 def report(time_period: Annotated[str, typer.Argument()] = datetime.now().strftime("%Y-%m")):
+    """
+    Report your earnings.
+    """
     data = load_data()
     total = sum(
             entry["amount_czk"]
