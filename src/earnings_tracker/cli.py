@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Annotated
 
 import typer
@@ -33,17 +33,55 @@ def earn(amount: float, currency: str):
 
 
 @app.command()
-def report(time_period: Annotated[str, typer.Argument()] = datetime.now().strftime("%Y-%m")):
+def report(
+        time_period: Annotated[str, typer.Argument()] = "day",
+        date: Annotated[str, typer.Argument()] = datetime.now().strftime("%Y-%m-%d")
+        ):
+    
     """
     Report your earnings.
     """
+
     data = load_data()
-    total = sum(
+
+    if time_period == "day":
+        total = sum(
             entry["amount_czk"]
             for entry in data
-            if entry["date"].startswith(time_period)
-    )
-    print(f"Month: {time_period}")
+            if entry["date"].startswith(date)
+        )
+        print(f"Day: {date}")
+
+    elif time_period == "week":
+        week = date[:10]
+        total = sum(
+            entry["amount_czk"]
+            for entry in data
+            if entry["date"] >= week and entry["date"] < (datetime.strptime(week, "%Y-%m-%d") + timedelta(days=7)).strftime("%Y-%m-%d")
+        )
+        print(f"Week starting: {week}")
+
+    elif time_period == "month":
+        month = date[:7]
+        total = sum(
+            entry["amount_czk"]
+            for entry in data
+            if entry["date"].startswith(month)
+        )
+        print(f"Month: {month}")
+
+    elif time_period == "year":
+        year = date[:4]
+        total = sum(
+            entry["amount_czk"]
+            for entry in data
+            if entry["date"].startswith(year)
+        )
+        print(f"Year: {year}")
+
+    else:
+        raise typer.BadParameter("time_period must be 'day', 'week', 'month', or 'year'")
+
     print(f"Earnings: {total:.2f} CZK")
 
 
