@@ -53,13 +53,17 @@ def report(
         print(f"Day: {date}")
 
     elif time_period == "week":
-        week = date[:10]
+        parsed_date = datetime.strptime(date[:10], "%Y-%m-%d")
+        monday = parsed_date - timedelta(days=parsed_date.weekday())
+        sunday = monday + timedelta(days=7)
+        monday_str = monday.strftime("%Y-%m-%d")
+        sunday_str = sunday.strftime("%Y-%m-%d")
         total = sum(
             entry["amount_czk"]
             for entry in data
-            if entry["date"] >= week and entry["date"] < (datetime.strptime(week, "%Y-%m-%d") + timedelta(days=7)).strftime("%Y-%m-%d")
+            if monday_str <= entry["date"] < sunday_str
         )
-        print(f"Week starting: {week}")
+        print(f"Week: {monday_str} – {(sunday - timedelta(days=1)).strftime('%Y-%m-%d')}")
 
     elif time_period == "month":
         month = date[:7]
