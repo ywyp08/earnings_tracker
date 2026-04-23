@@ -7,6 +7,7 @@ try:
 except ImportError:
     import tomli as tomllib
 
+
 CONFIG_DIR = Path.home() / ".config" / "earnings_tracker"
 CONFIG_FILE = CONFIG_DIR / "config.toml"
 
@@ -14,6 +15,7 @@ DEFAULT_CONFIG = {
     "default_currency": "USD",
     "data_file_path": "~/.local/share/earnings_tracker/earnings.json"
 }
+
 
 def load_config():
     if not CONFIG_FILE.exists():
@@ -26,10 +28,12 @@ def load_config():
     merged.update(config)
     return merged
 
+
 def get_data_file_path():
     config = load_config()
     path = config["data_file_path"]
     return os.path.expanduser(path)
+
 
 def get_default_currency():
     config = load_config()

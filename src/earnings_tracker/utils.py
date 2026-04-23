@@ -5,6 +5,7 @@ from urllib.error import URLError, HTTPError
 
 from .config import get_data_file_path
 
+
 FILE_PATH = get_data_file_path()
 
 
