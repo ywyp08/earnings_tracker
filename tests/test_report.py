@@ -85,4 +85,4 @@ def test_report_week(monkeypatch):
 
     assert result.exit_code == 0
     assert "Week:" in result.output
-    assert "180.00 USD" in result.output  # 100 + 50 + 30 from Apr 10 and 9
+    assert "180.00 USD" in result.output
