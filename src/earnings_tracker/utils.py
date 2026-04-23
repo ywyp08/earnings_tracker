@@ -24,12 +24,12 @@ def save_data(data):
         json.dump(data, file, indent=4)
 
 
-def convert_to_czk(amount, currency):
+def convert_to_default(amount, currency, target_currency):
     url = f'https://api.exchangerate-api.com/v4/latest/{currency.upper()}'
     try:
         response = urllib.request.urlopen(url)
         data = json.load(response)
-        rate = data['rates']['CZK']
+        rate = data['rates'][target_currency.upper()]
     except (HTTPError, URLError, KeyError, ValueError):
         raise ValueError("currency conversion failed")
-    return amount * rate
+    return amount * rate, rate

@@ -3,7 +3,7 @@ from typing import Annotated
 
 import typer
 
-from earnings_tracker.utils import load_data, save_data, convert_to_czk 
+from earnings_tracker.utils import load_data, save_data, convert_to_default 
 from earnings_tracker.config import get_default_currency 
 
 
@@ -18,8 +18,9 @@ def earn(amount: float, currency: Annotated[str, typer.Argument()] = None):
     if currency is None:
         currency = get_default_currency()
     
+    target_currency = get_default_currency()
     try:
-        amount_czk = convert_to_czk(amount, currency)
+        amount_default, rate_to_default = convert_to_default(amount, currency, target_currency)
     except ValueError:
         typer.echo("Error: conversion failed (check currency or network)")
         raise typer.Exit(1)
@@ -29,7 +30,9 @@ def earn(amount: float, currency: Annotated[str, typer.Argument()] = None):
             "date": datetime.now().strftime("%Y-%m-%d"),
             "amount": amount,
             "currency": currency,
-            "amount_czk": amount_czk
+            "amount_default": amount_default,
+            "currency_default": target_currency,
+            "rate_to_default": rate_to_default
     }
     data.append(entry)
     save_data(data)
@@ -47,10 +50,11 @@ def report(
     """
 
     data = load_data()
+    default_currency = get_default_currency()
 
     if time_period == "day":
         total = sum(
-            entry["amount_czk"]
+            entry.get("amount_default", 0)
             for entry in data
             if entry["date"].startswith(date)
         )
@@ -63,7 +67,7 @@ def report(
         monday_str = monday.strftime("%Y-%m-%d")
         sunday_str = sunday.strftime("%Y-%m-%d")
         total = sum(
-            entry["amount_czk"]
+            entry.get("amount_default", 0)
             for entry in data
             if monday_str <= entry["date"] < sunday_str
         )
@@ -72,7 +76,7 @@ def report(
     elif time_period == "month":
         month = date[:7]
         total = sum(
-            entry["amount_czk"]
+            entry.get("amount_default", 0)
             for entry in data
             if entry["date"].startswith(month)
         )
@@ -81,7 +85,7 @@ def report(
     elif time_period == "year":
         year = date[:4]
         total = sum(
-            entry["amount_czk"]
+            entry.get("amount_default", 0)
             for entry in data
             if entry["date"].startswith(year)
         )
@@ -90,7 +94,7 @@ def report(
     else:
         raise typer.BadParameter("time_period must be 'day', 'week', 'month', or 'year'")
 
-    print(f"Earnings: {total:.2f} CZK")
+    print(f"Earnings: {total:.2f} {default_currency}")
 
 
 def main():
