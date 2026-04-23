@@ -29,16 +29,19 @@ This will install the `money` command globally.
 To log a new earning:
 
 ```bash
-money earn <amount> <currency>
+money earn <amount> [currency]
 ```
+
+If currency is omitted, it uses the default from config (default: CZK).
 
 Example:
 
 ```bash
 money earn 100 usd
+money earn 50  # Uses default currency
 ```
 
-This logs $100 USD, converts it to CZK using the current exchange rate, and saves it with today's date.
+This logs the amount, converts it to CZK using the current exchange rate, and saves it with today's date.
 
 ### Generating Reports
 
@@ -70,12 +73,21 @@ money report month 2026-04
 money report year 2026
 ```
 
-## Data Storage
+## Configuration
 
-Earnings data is stored in `~/.local/share/earnings_tracker/earnings.json`. Each entry includes:
-- Date
-- Original amount and currency
-- Converted amount in CZK
+The app uses a config file at `~/.config/earnings_tracker/config.toml` for user settings. If it doesn't exist, defaults are used.
+
+Copy the example `config.toml` from the project root to `~/.config/earnings_tracker/config.toml` and edit:
+
+- `default_currency`: Default currency for earnings (e.g., "EUR")
+- `data_file_path`: Path to store earnings data (default: `~/.local/share/earnings_tracker/earnings.json`)
+
+Example config:
+
+```toml
+default_currency = "EUR"
+data_file_path = "~/earnings.json"
+```
 
 ## Dependencies
 
