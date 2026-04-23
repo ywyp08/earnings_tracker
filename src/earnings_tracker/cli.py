@@ -4,16 +4,20 @@ from typing import Annotated
 import typer
 
 from earnings_tracker.utils import load_data, save_data, convert_to_czk 
+from earnings_tracker.config import get_default_currency 
 
 
 app = typer.Typer(help="Earnings Tracker CLI for logging and reporting earnings.")
 
 
 @app.command()
-def earn(amount: float, currency: str):
+def earn(amount: float, currency: Annotated[str, typer.Argument()] = None):
     """
     Log new earning.
     """
+    if currency is None:
+        currency = get_default_currency()
+    
     try:
         amount_czk = convert_to_czk(amount, currency)
     except ValueError:

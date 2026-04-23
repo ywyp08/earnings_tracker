@@ -3,8 +3,9 @@ import os
 import urllib.request
 from urllib.error import URLError, HTTPError
 
+from .config import get_data_file_path
 
-FILE_PATH = os.path.expanduser("~/.local/share/earnings_tracker/earnings.json")
+FILE_PATH = get_data_file_path()
 
 
 def load_data():

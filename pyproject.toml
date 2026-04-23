@@ -8,7 +8,7 @@ version = "0.0.1"
 description = "Command-line based tool for keeping track of earnings"
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = ["typer"]
+dependencies = ["typer", "tomli; python_version < '3.11'"]
 
 [project.scripts]
 money = "earnings_tracker.cli:main"

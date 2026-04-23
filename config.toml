@@ -1,0 +1,5 @@
+# Default configuration for Earnings Tracker
+# Copy this file to ~/.config/earnings_tracker/config.toml and edit as needed
+
+default_currency = "CZK"
+data_file_path = "~/.local/share/earnings_tracker/earnings.json"
