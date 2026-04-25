@@ -36,6 +36,7 @@ def earn(amount: float, currency: Annotated[str, typer.Argument()] = None):
     }
     data.append(entry)
     save_data(data)
+    print(f"Earned: {entry['amount_default']} {entry['currency_default']}\n")
     print(f"Logged: {entry}")
 
 
