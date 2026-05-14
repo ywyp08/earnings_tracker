@@ -1,115 +1,51 @@
 # Earnings Tracker
 
-A command-line tool for tracking and reporting earnings in multiple currencies, with automatic conversion to CZK.
+A simple command-line tool to log earnings in different currencies and view reports in CZK.
 
-## Features
+## Quick Start
 
-- Log earnings with amounts in various currencies
-- Automatic currency conversion to CZK using real-time exchange rates
-- Generate reports for daily, weekly, monthly, or yearly earnings
-- Data stored locally in JSON format
-- Simple CLI interface
+Requires Python 3.9 or later.
 
-## Installation
-
-1. Ensure you have Python 3.9 or later installed.
-2. Clone or download this repository.
-3. Install the package in editable mode:
-
-   ```bash
-   pip install -e .
-   ```
-
-This will install the `money` command globally.
-
-## Usage
-
-### Logging Earnings
-
-To log a new earning:
+Install the package from the project root:
 
 ```bash
-money earn <amount> [currency]
+pip install -e .
 ```
 
-If currency is omitted, it uses the default from config (default: CZK).
+Check the CLI help:
 
-Example:
+```bash
+money --help
+```
+
+Log earnings:
 
 ```bash
 money earn 100 usd
-money earn 50  # Uses default currency
 ```
 
-This logs the amount, converts it to CZK using the current exchange rate, and saves it with today's date.
-
-### Generating Reports
-
-To view earnings reports:
+View today’s report:
 
 ```bash
-money report [time_period] [date]
-```
-
-- `time_period`: `day`, `week`, `month`, or `year` (defaults to `day`)
-- `date`: Optional date in YYYY-MM-DD format (defaults to today)
-
-Examples:
-
-```bash
-# Today's earnings
 money report day
-
-# Earnings for a specific day
-money report day 2026-04-10
-
-# Weekly earnings (week containing the date)
-money report week 2026-04-10
-
-# Monthly earnings
-money report month 2026-04
-
-# Yearly earnings
-money report year 2026
 ```
 
-## Configuration
+## Commands
 
-The app uses a config file at `~/.config/earnings_tracker/config.toml` for user settings. If it doesn't exist, defaults are used.
+`money earn <amount> [currency]`
+- Logs an earning in the given currency.
+- If `currency` is omitted, the default currency from the config is used.
 
-Copy the example `config.toml` from the project root to `~/.config/earnings_tracker/config.toml` and edit:
+`money report [time_period] [date]`
+- Shows earnings converted to CZK.
+- `time_period` can be `day`, `week`, `month`, or `year`.
+- `date` is optional and uses `YYYY-MM-DD` format.
 
-- `default_currency`: Default currency for earnings (e.g., "EUR")
-- `data_file_path`: Path to store earnings data (default: `~/.local/share/earnings_tracker/earnings.json`)
-
-Example config:
-
-```toml
-default_currency = "EUR"
-data_file_path = "~/earnings.json"
-```
-
-## Dependencies
-
-- `typer`: For CLI interface
-- Internet connection for currency conversion (uses exchangerate-api.com)
-
-## Development
-
-### Running Tests
+## Examples
 
 ```bash
-python -m pytest tests/
+money earn 100 usd
+money earn 50
+money report day
+money report month 2026-05
 ```
-
-### Project Structure
-
-- `src/earnings_tracker/`: Main package
-  - `cli.py`: Command-line interface
-  - `utils.py`: Utility functions for data handling and currency conversion
-- `tests/`: Unit tests
-- `pyproject.toml`: Project configuration
-
-## License
-
-[Specify license here, e.g., MIT]
