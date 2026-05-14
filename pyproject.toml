@@ -3,12 +3,30 @@ requires = ["hatchling >= 1.26"]
 build-backend = "hatchling.build"
 
 [project]
-name = "earnings_tracker"
+name = "earnings-tracker"
 version = "0.0.1"
-description = "Command-line based tool for keeping track of earnings"
+description = "CLI and web app for logging and reporting earnings with multi-currency support"
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = ["typer", "tomli; python_version < '3.11'"]
+authors = [{name = "Your Name", email = "your.email@example.com"}]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial",
+]
+keywords = ["earnings", "tracker", "finance", "cli", "web"]
+dependencies = ["typer", "tomli; python_version < '3.11'", "streamlit"]
+
+[project.urls]
+Repository = "https://github.com/yourusername/earnings-tracker"
+"Bug Tracker" = "https://github.com/yourusername/earnings-tracker/issues"
 
 [project.scripts]
 money = "earnings_tracker.cli:main"
